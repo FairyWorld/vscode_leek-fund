@@ -966,7 +966,7 @@ export function registerViewEvent(
       XuanGuBaoNewsView.getInstance().show();
     })
   );
-  // 设置 A股 AI 分析历史长度
+  // 设置个股 AI 分析历史长度（A 股 / 港股均生效）
   context.subscriptions.push(
     commands.registerCommand('leek-fund.setAiStockHistoryRange', async () => {
       const QuickPickItems = [
@@ -978,10 +978,12 @@ export function registerViewEvent(
       ];
       const current = LeekFundConfig.getConfig('leek-fund.aiStockHistoryRange', '3m');
       QuickPickItems.forEach(it => it.picked = it.description === current);
-      const sel = await window.showQuickPick(QuickPickItems, { placeHolder: '选择A股AI分析历史长度' });
+      const sel = await window.showQuickPick(QuickPickItems, {
+        placeHolder: '选择个股 AI 分析所用的前复权日线历史长度',
+      });
       if (sel && sel.description) {
         await LeekFundConfig.setConfig('leek-fund.aiStockHistoryRange', sel.description);
-        window.showInformationMessage(`已设置A股AI分析近${sel.label}复权日线数据`);
+        window.showInformationMessage(`已设置个股 AI 分析近 ${sel.label} 前复权日线数据`);
       }
     })
   );

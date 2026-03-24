@@ -600,6 +600,7 @@ export default class StockService extends LeekService {
             stockItem.isStock = true;
             stockItem.type = 'hk';
             stockItem.symbol = stockItem.code.replace('hk', '');
+            stockItem.contextValue = 'hkStock';
             stockItem.updown = formatNumber(+price - +yestclose, fixedNumber, false);
             stockItem.percent =
               (stockItem.updown >= 0 ? '+' : '-') +
