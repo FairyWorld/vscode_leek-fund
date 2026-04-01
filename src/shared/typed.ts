@@ -132,7 +132,7 @@ export type ForexData = {
   publishTime?: string; // 发布时间：时分秒
 };
 
-// A股 AI 分析历史长度 - 枚举与工具
+// 个股 AI 分析历史长度（A 股 / 港股）- 枚举与工具
 export type AiStockHistoryRange = '1y' | '6m' | '3m' | '1m' | '1w';
 
 export const AI_HISTORY_RANGE_LABEL: Record<AiStockHistoryRange, string> = {

@@ -2,7 +2,7 @@
   "name": "leek-fund",
   "displayName": "韭菜盒子",
   "description": "韭菜盒子，VSCode 里也可以看股票 & 基金实时数据，做最好用的投资插件",
-  "version": "3.22.0",
+  "version": "3.23.0",
   "author": "Nicky Lao <giscafer@outlook.com>",
   "repository": {
     "type": "git",
@@ -228,7 +228,7 @@
       },
       {
         "command": "leek-fund.aiStockAnalysis",
-        "title": "AI分析股票(供AI分析的内容有该股票的复权日线数据+雪球资讯+韭研公社)",
+        "title": "AI分析股票（A股搜狐/港股腾讯 前复权日线，含快讯与韭研）",
         "icon": "$(lightbulb)"
       },
       {
@@ -526,7 +526,7 @@
         },
         {
           "command": "leek-fund.aiStockAnalysis",
-          "when": "view == leekFundView.stock  && viewItem == aStock",
+          "when": "view == leekFundView.stock && (viewItem == aStock || viewItem == hkStock)",
           "group": "inline"
         },
         {
@@ -806,7 +806,7 @@
             "1个月",
             "1周"
           ],
-          "description": "A股 AI 分析历史长度"
+          "description": "个股 AI 分析所用的前复权日线历史区间（A 股：搜狐；港股：腾讯）"
         }
       }
     },
@@ -899,7 +899,7 @@
   "dependencies": {
     "amplitude": "^5.1.4",
     "axios": "^0.19.2",
-    "cheerio": "^1.0.0",
+    "cheerio": "1.0.0",
     "compare-versions": "^3.6.0",
     "entities": "^4.5.0",
     "http-proxy-middleware": "^3.0.3",

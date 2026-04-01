@@ -1,8 +1,8 @@
 import { Webview, workspace, window } from 'vscode';
 import OpenAI from 'openai';
-import axios from 'axios';
 import { fetchJYGNewsByCode } from '../jiuyangongshe-news';
 import { FlashNewsService } from './flash-news-service';
+import { fetchRecentQfqTradeDataForAi } from '../../shared/aiStockHistoryData';
 
 export class AiService {
   private aiStockAnalysisInProgress = false;
@@ -147,9 +147,9 @@ export class AiService {
     let tradeDataAppendix = '';
     let newsAppendix = '';
     try {
-      const tradeCsv = await this.fetchRecentQfqData(target.id);
+      const { text: tradeCsv, sourceLabel } = await fetchRecentQfqTradeDataForAi(target.id, range);
       if (tradeCsv) {
-        tradeDataAppendix = `\n\n以下为${label}的前复权日线数据（来自搜狐财经）：\n${tradeCsv}`;
+        tradeDataAppendix = `\n\n以下为${label}的前复权日线数据（来自${sourceLabel}）：\n${tradeCsv}`;
       }
       const todayNews = await this.fetchTodayAllNewsText();
       if (todayNews) {
@@ -232,60 +232,4 @@ export class AiService {
     }
   }
 
-  private async fetchRecentQfqData(stockId: string): Promise<string> {
-    try {
-      // 读取配置的历史区间长度，默认 3m
-      const cfg = workspace.getConfiguration();
-      const range: string = cfg.get('leek-fund.aiStockHistoryRange', '3m');
-      const now = new Date();
-      const startDate = this.calcStartDateByRange(now, range);
-      const start = this.formatDateYYYYMMDD(startDate).replace(/-/g, '');
-      const end = this.formatDateYYYYMMDD(now).replace(/-/g, '');
-
-      const sohuCode = this.toSohuCode(stockId);
-      if (!sohuCode) return '';
-
-      const url = `http://q.stock.sohu.com/hisHq?code=${sohuCode}&start=${start}&end=${end}&stat=1&order=D&period=d&callback=historySearchHandler&rt=jsonp`;
-      const response = await axios.get(url, { responseType: 'text' });
-      return typeof response === 'string' ? response : (response.data ? String(response.data) : '');
-    } catch (e) {
-      console.error('fetchRecentQfqData error:', e);
-      return '';
-    }
-  }
-
-  private calcStartDateByRange(base: Date, range: string): Date {
-    const y = base.getFullYear();
-    const m = base.getMonth();
-    const d = base.getDate();
-    switch (range) {
-      case '1y':
-        return new Date(y - 1, m, d);
-      case '6m':
-        return new Date(y, m - 6, d);
-      case '1m':
-        return new Date(y, m - 1, d);
-      case '1w':
-        return new Date(base.getTime() - 7 * 24 * 60 * 60 * 1000);
-      case '3m':
-      default:
-        return new Date(y, m - 3, d);
-    }
-  }
-
-  private formatDateYYYYMMDD(d: Date): string {
-    const y = d.getFullYear();
-    const m = (d.getMonth() + 1).toString().padStart(2, '0');
-    const day = d.getDate().toString().padStart(2, '0');
-    return `${y}-${m}-${day}`;
-  }
-
-  private toSohuCode(stockId: string): string | null {
-    if (!stockId || stockId.length < 3) return null;
-    const lower = stockId.toLowerCase();
-    if (lower.startsWith('sh') || lower.startsWith('sz')) {
-      return `cn_${lower.slice(2)}`;
-    }
-    return null;
-  }
 }

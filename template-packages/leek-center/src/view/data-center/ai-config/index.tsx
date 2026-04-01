@@ -75,10 +75,10 @@ const AIConfig: React.FC = () => {
           </Form.Item>
 
           <Form.Item
-            label="A股AI分析历史长度"
+            label="个股 AI 分析历史长度"
             name="aiStockHistoryRange"
             rules={[{ required: true, message: '请选择历史长度' }]}
-            extra="选择用于AI分析的复权日线数据历史长度"
+            extra="用于 A 股（搜狐）与港股（腾讯）前复权日线的历史区间"
           >
             <Select placeholder="请选择历史长度">
               <Select.Option value="1y">1年</Select.Option>
